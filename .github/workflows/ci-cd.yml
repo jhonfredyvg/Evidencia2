@@ -64,4 +64,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: scraped-data
-          path: laptops_*.csv
+          path: datos/laptops_*.csv
