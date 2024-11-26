@@ -37,7 +37,7 @@ def scrape_falabella(url_base, num_pages=10):
         except requests.exceptions.RequestException as e:
             logging.error(f"Error al obtener la página {url}: {e}")
             break # Detener el scraping si hay un error de red
-        
+
     df = pd.DataFrame(data)    
     from datetime import datetime
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -50,4 +50,4 @@ if __name__ == "__main__":
     url_base = 'https://www.falabella.com.co/falabella-co/category/cat1361001/Computadores-Portatiles'
     df = scrape_falabella(url_base)
     print(df)
-    # df.to_csv("laptops.csv", index=False)
+    
