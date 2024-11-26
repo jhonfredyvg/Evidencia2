@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main, Rama1 ]
 
+# Añade esta sección de permisos
+permissions:
+  contents: write  # Otorga permisos de escritura para contenido del repositorio
+
 jobs:
   build:
     runs-on: ubuntu-latest
