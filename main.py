@@ -42,6 +42,12 @@ def scrape_falabella(url_base, num_pages=10):
     from datetime import datetime
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     df.to_csv(f"laptops_{timestamp}.csv", index=False)
+    ## hacer que el archivo csv se descargue automaticamente
+    import os
+    import webbrowser
+    csv_file_path = f"laptops_{timestamp}.csv"
+    webbrowser.open(f"file://{os.path.abspath(csv_file_path)}")
+
 
     return df
 
