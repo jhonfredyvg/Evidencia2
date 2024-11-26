@@ -53,4 +53,4 @@ def scrape_falabella(url_base, num_pages=10):
 if __name__ == "__main__":
     url_base = 'https://www.falabella.com.co/falabella-co/category/cat1361001/Computadores-Portatiles'
     df = scrape_falabella(url_base)
-   # print(df)
+    print(df)
