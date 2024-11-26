@@ -1,10 +1,10 @@
+import os
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import logging
 from tqdm import tqdm
-import seaborn as sns
-import matplotlib.pyplot as plt
+from datetime import datetime
 
 # Disable DEBUG messages
 logging.getLogger('requests').setLevel(logging.WARNING)
@@ -25,11 +25,10 @@ def scrape_falabella(url_base, num_pages=10):
                     nombre_producto = element.find('b', class_='pod-subTitle').text.strip()
                     precio_texto = element.find('li', class_='prices-0').find('span', class_='copy10').text.strip()
                     precio = float(precio_texto.replace('$', '').replace('.', ''))
-                    # ... (resto del código de extracción de datos como antes)
+                    
                     data.append({
                         'Nombre': nombre_producto,
                         'Precio': precio,
-                        # ... (resto de los campos)
                     })
                 except Exception as e:
                     logging.error(f"Error al procesar elemento: {e}")
@@ -38,22 +37,20 @@ def scrape_falabella(url_base, num_pages=10):
             logging.error(f"Error al obtener la página {url}: {e}")
             break # Detener el scraping si hay un error de red
 
-    df = pd.DataFrame(data)    
-    from datetime import datetime
+    # Asegurar que existe la carpeta de datos si no existe
+    os.makedirs('datos', exist_ok=True)
+
+    # Generar CSV con timestamp en la carpeta 'datos'
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    df.to_csv(f"laptops_{timestamp}.csv", index=False)
-    ## hacer que el archivo csv se descargue automaticamente
-    import os
-    import webbrowser
-    csv_file_path = f"laptops_{timestamp}.csv"
-    webbrowser.open(f"file://{os.path.abspath(csv_file_path)}")
-
-
+    csv_filename = f"datos/laptops_{timestamp}.csv"
+    
+    df = pd.DataFrame(data)
+    df.to_csv(csv_filename, index=False)
+    
+    print(f"Archivo CSV guardado: {csv_filename}")
     return df
-
 
 if __name__ == "__main__":
     url_base = 'https://www.falabella.com.co/falabella-co/category/cat1361001/Computadores-Portatiles'
     df = scrape_falabella(url_base)
     print(df)
-    
