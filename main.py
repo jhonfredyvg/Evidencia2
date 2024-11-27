@@ -70,3 +70,4 @@ if __name__ == "__main__":
     else:
         print("No se pudo realizar el scraping")
         #Nuevo cambio en el repositorio
+        #Nuevo cambio
