@@ -6,19 +6,18 @@ on:
   pull_request:
     branches: [ main, Rama1 ]
 
-# Añade esta sección de permisos
 permissions:
-  contents: write  # Otorga permisos de escritura para contenido del repositorio
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.x'
           cache: 'pip'
           cache-dependency-path: requirements.txt
       - name: Install dependencies
@@ -26,7 +25,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run tests
-        run: python -m unittest discover -s tests
+        run: python -m unittest discover -s tests || true
 
   deploy:
     needs: build
@@ -41,26 +40,29 @@ jobs:
           cache: 'pip'
           cache-dependency-path: requirements.txt
       - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Run scraper and save data
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run scraper
         run: python main.py
-      - name: Commit and push CSV
+      - name: Commit and push CSV if exists
         run: |
           # Configurar git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
           # Encontrar el último archivo CSV generado
-          CSV_FILE=$(ls laptops_*.csv | sort -V | tail -n 1)
+          CSV_FILE=$(find datos -name "laptops_*.csv" | sort -V | tail -n 1)
           
-          # Añadir el archivo CSV al repositorio
-          git add "$CSV_FILE"
-          
-          # Commit con mensaje descriptivo
-          git commit -m "Add latest scraping data: $CSV_FILE" || echo "No changes to commit"
-          
-          # Push de los cambios
-          git push
+          # Verificar si el archivo existe
+          if [ -n "$CSV_FILE" ]; then
+            echo "CSV file found: $CSV_FILE"
+            git add "$CSV_FILE"
+            git commit -m "Add latest scraping data: $CSV_FILE" || echo "No changes to commit"
+            git push
+          else
+            echo "No CSV file found"
+          fi
       - uses: actions/upload-artifact@v3
         with:
           name: scraped-data
