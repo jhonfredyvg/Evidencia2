@@ -69,4 +69,4 @@ if __name__ == "__main__":
         print(df)
     else:
         print("No se pudo realizar el scraping")
-        #
+        #Actualizar algun cambio en el archivo
